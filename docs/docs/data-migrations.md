@@ -1,15 +1,14 @@
 # Data Migrations
 
-> Data Migrations are available as of RedwoodJS v0.15
-
 There are two kinds of changes you can make to your database:
 
-* Changes to structure
-* Changes to content
+* changes to structure
+* changes to content
 
-In Redwood, [Prisma Migrate](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-migrate) takes care of codifying changes to your database *structure* in code by creating a snapshot of changes to your database that can be reliably repeated to end up in some known state.
+In Redwood, [Prisma Migrate](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-migrate) takes care of codifying changes to your database structure by creating a snapshot of changes to your database that can be reliably repeated to end up in some known state.
 
-To track changes to your database *content*, Redwood includes a feature we call **Data Migration**. As your app evolves and you move data around, you need a way to consistently declare how that data should move.
+To track changes to your database content, Redwood includes a feature we call **Data Migrations**.
+As your app evolves and you move data around, you need a way to consistently declare how that data should move.
 
 Imagine a `User` model that contains several columns for user preferences. Over time, you may end up with more and more preferences to the point that you have more preference-related columns in the table than you do data unique to the user! This is a common occurrence as applications grow. You decide that the app should have a new model, `Preference`, to keep track of them all (and `Preference` will have a foreign key `userId` to reference it back to its `User`). You'll use Prisma Migrate to create the new `Preference` model, but how do you copy the preference data to the new table? Data migrations to the rescue!
 
@@ -104,28 +103,35 @@ This loops through each existing `User` and creates a new `Preference` record co
 
 When you're ready, you can execute your data migration with `data-migrate`'s `up` command:
 
-    yarn rw data-migrate up
+```bash
+yarn rw data-migrate up
+```
 
 This goes through each file in `api/db/dataMigrations`, compares it against the list of migrations that have already run according to the `DataMigration` table in the database, and executes any that aren't present in that table, sorted oldest to newest based on the timestamp in the filename.
 
-Any logging statements (like `console.info()`) you include in your data migration script will be output to the console as the script is running.
+Any logging statements (like `console.info`) you include in your data migration script will be output to the console as the script is running.
 
-If the script encounters an error, the process will abort, skipping any following data migrations.
+If the script encounters an error, the process aborts, skipping any following data migrations.
 
 > The example data migration above didn't include this for brevity, but you should always run your data migration [inside a transaction](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/transactions#bulk-operations-experimental) so that if any errors occur during execution the database will not be left in an inconsistent state where only *some* of your changes were performed.
 
 ## Long-term Maintainability
 
-Ideally you can run all database migrations and data migrations from scratch (like when a new developer joins the team) and have them execute correctly. Unfortunately you don't get that ideal scenario by default.
+Ideally you can run all database migrations and data migrations from scratch (like when a new developer joins the team) and have them execute correctly.
+Unfortunately you don't get that ideal scenario by default.
 
-Take our example above—what happens when a new developer comes long and attempts to setup their database? All DB migrations will run first (including the one that drops the preference-related columns from `User`) before the data migrations run. They will get an error when they try to read something like `user.newsletter` and that column doesn't exist!
+Take our example above.
+What happens when a new developer comes along and attempts to setup their database?
+All DB migrations will run first (including the one that drops the preference-related columns from `User`) before the data migrations run.
+They'll get an error when they try to read something like `user.newsletter` and that column doesn't exist!
 
 One technique to combat this is to check for the existence of these columns before the data migration does anything. If `user.newsletter` doesn't exist, then don't bother running the data migration at all and assume that your [seed data](cli-commands.md#prisma-db-seed) is already in the correct format:
 
-```jsx {4,15}
+```js
 export default async ({ db }) => {
   const users = await db.user.findMany()
 
+  // highlight-next-line
   if (typeof user.newsletter !== undefined) {
     asyncForEach(users, async (user) => {
       await db.preference.create({
@@ -137,18 +143,23 @@ export default async ({ db }) => {
         }
       })
     })
+  // highlight-next-line
   }
 }
 ```
 
 ## Lifecycle Summary
 
-Run once:
+Run these commands once:
 
-    yarn rw data-migrate install
-    yarn rw prisma migrate dev
+```bash
+yarn rw data-migrate install
+yarn rw prisma migrate dev
+```
 
-Run every time you need a new data migration:
+Run these commands when you need a new data migration:
 
-    yarn rw generate dataMigration migrationName
-    yarn rw data-migrate up
+```bash
+yarn rw generate dataMigration <migration-name>
+yarn rw data-migrate up
+```
