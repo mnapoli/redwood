@@ -1,8 +1,8 @@
 # App Configuration: redwood.toml
 
-You can configure your Redwood app's settings in `redwood.toml`. By default, `redwood.toml` lists the following configuration options:
+You can configure your Redwood app in `redwood.toml`. By default, `redwood.toml` lists the following configuration options:
 
-```toml
+```toml title="redwood.toml"
 [web]
   title = "Redwood App"
   port = 8910
@@ -14,29 +14,18 @@ You can configure your Redwood app's settings in `redwood.toml`. By default, `re
   open = true
 ```
 
-These are listed by default because they're the ones that you're most likely to configure. But there are plenty more available. The rest are spread between Redwood's [webpack configuration files](https://github.com/redwoodjs/redwood/tree/main/packages/core/config) and `@redwoodjs/internal`'s [config.ts](https://github.com/redwoodjs/redwood/blob/main/packages/internal/src/config.ts#L70-L99):
+These are listed by default because they're the ones that you're most likely to configure. But there are plenty more available.
 
-The options and their structure are based on Redwood's notion of sides and targets. Right now, Redwood has two fixed sides, API and Web, that target NodeJS Lambdas and Browsers respectively. In the future, we'll add support for more sides and targets, like Electron and React Native (you can already see them listed as enums in [TargetEnum](https://github.com/redwoodjs/redwood/blob/d51ade08118c17459cebcdb496197ea52485364a/packages/internal/src/config.ts#L11-L12)), and as we do, you'll see them reflected in `redwood.toml`. But right now, you'll most likely never touch options like `target`.
-
-The idea is that, in the future, changes here will have cascading, "app-level" effects. Using generators as an example, based on your side and target, the generators will behave differently, but appropriately different.
+The options and their structure are based on Redwood's notion of sides and targets. Right now, Redwood has two fixed sides, api and web, that target Node.js Lambdas and browsers respectively. In the future, we'll add support for more sides and targets, and as we do, you'll see them reflected in `redwood.toml`.
 
 > For the difference between a side and a target, see [Redwood File Structure](tutorial/chapter1/file-structure.md).
 
-You can think of `redwood.toml` as a convenience layer over Redwood's webpack configuration files. That is, for certain settings, instead of having to deal with webpack directly, we give you quick access via `redwood.toml`. Some of these settings are for development, some are for production, and some are for both. You can actually see this reflected in which webpack file each configuration option is referenced in&mdash;[webpack.development.js](https://github.com/redwoodjs/redwood/blob/main/packages/core/config/webpack.development.js), [webpack.production.js](https://github.com/redwoodjs/redwood/blob/main/packages/core/config/webpack.production.js), and [webpack.common.js](https://github.com/redwoodjs/redwood/blob/main/packages/core/config/webpack.common.js).
+You can think of `redwood.toml` as a frontend for configuring Redwood's build tools.
+For certain options, instead of having to deal with build tools like webpack directly, we give you quick access via `redwood.toml`.
 
-<!-- https://github.com/redwoodjs/redwood/pull/152#issuecomment-593835518 -->
-
-`redwood.toml` also serves a slightly larger purpose: it's used to determine the base directory of a Redwood project. So this file is what really makes a Redwood app a Redwood app. If you remove it and run `yarn rw dev`, you'll get an error:
-
-```bash
-Error: Could not find a "redwood.toml" file, are you sure you're in a Redwood project?
-```
-
-(So don't do that!)
+`redwood.toml` also serves a slightly larger purpose: it's used to determine the base directory of a Redwood project. So this file is what really makes a Redwood app a Redwood app.
 
 ## [web]
-
-Configuration for the web side.
 
 | Key                           | Description                                                                | Default                 | Context       |
 | :---------------------------- | :------------------------------------------------------------------------- | :---------------------- | :------------ |
@@ -56,7 +45,7 @@ Configuration for the web side.
 
 You have full control over the path to your serverless functions via `apiUrl`. You can specify it either as a path (below) or a URL:
 
-```toml
+```toml title="redwood.toml"
 [web]
   apiUrl = "/.redwood/functions"
 ```
@@ -72,7 +61,7 @@ But sometimes you want to host your api side somewhere else, or even on a differ
 
 **a) Change `apiUrl` to your new domain**
 
-```toml
+```toml title="redwood.toml"
 [web]
   apiUrl = "https://api.coolredwoodapp.com"
 ```
@@ -83,7 +72,7 @@ This means your Redwood project's web side (i.e. the frontend) points to the abo
 
 You can also change the GraphQL endpoint only (without affecting other things, like dbAuth):
 
-```diff
+```diff title="redwood.toml"
 [web]
   apiUrl = "/.redwood/functions"
 + apiGraphqlEndpoint = "https://coolrwapp.mycdn.com"
@@ -95,7 +84,7 @@ This is particularly useful if you'd like to use a CDN provider like GraphCDN in
 
 If you're using dbAuth, you may decide to point your auth function (i.e. the serverless function used for login/signup) at a different host. To do this without affecting your GraphQL endpoint, you can add `apiDbAuthUrl` to your `redwood.toml`:
 
-```diff
+```diff title="redwood.toml"
 [web]
   apiUrl = "/.redwood/functions"
 + apiDbAuthUrl = "https://api.mycoolapp.com/auth"
@@ -108,22 +97,20 @@ If you're using dbAuth, you may decide to point your auth function (i.e. the ser
 <!-- https://github.com/redwoodjs/redwood/issues/427 -->
 <!-- https://github.com/redwoodjs/redwood/blob/d51ade08118c17459cebcdb496197ea52485364a/packages/core/config/webpack.common.js#L17-L31 -->
 
-```toml
+```toml title="redwood.toml"
 [web]
   includeEnvironmentVariables = ['API_KEY']
 ```
 
 Where `API_KEY` is defined in .env or .env.defaults:
 
-```plaintext
+```text title=".env"
 API_KEY=...
 ```
 
 `includeEnvironmentVariables` is the set of environment variables to whitelist for the web side. You can also prefix environment variables with `REDWOOD_ENV_` (see [Environment Variables](environment-variables.md#web)).
 
 ## [api]
-
-Configuration for the api side.
 
 | Key            | Description                                         | Default                    | Context       |
 |:---------------|:----------------------------------------------------|:---------------------------|:--------------|
@@ -176,7 +163,7 @@ You may elect to configure different `server.config.js` based on your deployment
 
 Given an environment variable `DEPLOY_ENVIRONMENT` that declares `development`, `staging`, `production`:
 
-```
+```toml title="redwood.toml"
 [api]
   port = 8911
   serverConfig = "./api/${DEPLOY_ENVIRONMENT}-server.config.js"
@@ -192,7 +179,7 @@ Configuration for the browser target.
 
 ### open
 
-```toml
+```toml title="redwood.toml"
 [browser]
   open = true
 ```
@@ -207,7 +194,7 @@ There's a lot more you can do here. For all the details, see Webpack's docs on [
 
 ## [generate]
 
-```toml
+```toml title="redwood.toml"
 [generate]
   tests = true
   stories = true
@@ -232,37 +219,41 @@ Setting to `true` creates stories for [Storybook](https://storybook.js.org/) whe
 
 To run a Redwood app within a container or VM, you'll want to set both the web and api's `host` to `0.0.0.0` to allow network connections to and from the host:
 
-```toml
+```toml title="redwood.toml"
 [web]
   host = '0.0.0.0'
-  ...
+  # ...
 [api]
   host = '0.0.0.0'
-  ...
+  # ...
 ```
 
 ## Using Environment Variables in `redwood.toml`
 
-Sometimes you want to change your `redwood.toml` based on the environment you're deploying to.
+You may find yourself wanting to change keys in `redwood.toml` based on the environment you're deploying to.
 For example, you may want to point to a different `apiUrl` in your staging environment.
-You can do this with environment variables.
+
+You can do so with environment variables.
 Let's look at an example:
 
-```toml
+```toml title="redwood.toml"
 [web]
+  // highlight-start
   title = "App running on ${APP_TITLE}"
   port = "${PORT:8910}"
   apiUrl = "${API_URL:/.redwood/functions}"
+  // highlight-end
   includeEnvironmentVariables = []
 ```
 
-This does the following:
+This `${<envVar>:[fallback]}` syntax does the following:
 
 - sets `title` by interpolating the env var `APP_TITLE`
 - sets `port` to the env var `PORT`, falling back to `8910`
 - sets `apiUrl` to the env var `API_URL`, falling back to `/.redwood/functions` (the default)
 
-That's pretty much all there is to it. Just remember two things:
+That's pretty much all there is to it.
+Just remember two things:
 
 1. fallbacks are always strings
-2. these values are interpolated at _build_ time
+2. these values are interpolated at build time
