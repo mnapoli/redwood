@@ -4,48 +4,52 @@ sidebar_position: 2
 
 # Quick Start
 
-> RedwoodJS requires [Node.js](https://nodejs.org/en/) (>=14.x <=16.x) and [Yarn](https://classic.yarnpkg.com/en/docs/install/) (>=1.15).
+> RedwoodJS requires [Node.js](https://nodejs.org/en/) `>=14.19.x <=16.x` and [Yarn](https://yarnpkg.com/getting-started/install) `>=1.15`.
 
-Run the following command to create a new Redwood project in a "my-redwood-app" project directory.
+Run the following command to create a new Redwood project in the `my-redwood-app` directory:
 
 ```
 yarn create redwood-app my-redwood-app
 ```
 
-Start the development server:
+Then, change into the directory and start the development server:
 
 ```
 cd my-redwood-app
 yarn redwood dev
 ```
 
-A browser should automatically open to http://localhost:8910 and you will see the Redwood welcome page.
+A browser should automatically open to `http://localhost:8910` where you'll be greeted by the Redwood welcome page.
 
 ## The Redwood CLI
 
-The Redwood developer experience relies heavily on the Redwood CLI. It's installed as a dependency when you create a new redwood-app, and is run locally in your app.
+Redwood's developer experience relies heavily on its CLI.
+It's installed as a dependency when you create a new Redwood app.
 
-The following will show all the available commands in the Redwood CLI (note: rw is alias of redwood):
+The following shows all the available commands in the Redwood CLI (note: `rw` is alias of `redwood`):
 
 ```
 yarn rw --help
 ```
 
-Some commands, like [prisma](cli-commands.md#prisma), have a lot of options. You can dig further into a specific command by adding `--help` to the command like so:
+Some commands, like [prisma](cli-commands.md#prisma), have a lot of options.
+You can dig further into a specific command by adding `--help` to the command like so:
 
 ```
 yarn rw prisma --help
 ```
 
-Visit the [CLI Doc](cli-commands.md) to see detailed information on all commands and options.
+Visit the [CLI reference](cli-commands.md) to see detailed information on all commands and options.
 
 ## Generators
 
-Redwood generators make monotonous developer tasks a breeze. Creating all the boilerplate code required for CRUD operations on a model can be accomplished with a few commands. Three to be exact.
+Redwood's generators make monotonous tasks a breeze.
+Creating all the boilerplate code required for CRUD operations on a model can be accomplished with a few commands.
+Three to be exact.
 
-Every new Redwood project comes with a default Model called UserExample in `api/db/schema.prisma` (ignore the rest of the file for now, it's for more advanced configuration data).
+Every new Redwood project comes with a default model called `UserExample` in `api/db/schema.prisma` (ignore the rest of the file for now, it's for more advanced configuration data).
 
-```
+```js
 model UserExample {
   id    Int     @id @default(autoincrement())
   email String  @unique
@@ -53,7 +57,7 @@ model UserExample {
 }
 ```
 
-With only two commands, Redwood will create everything we need for our CRUD operations:
+With only two commands, Redwood creates everything we need for our CRUD operations:
 
 ```
 yarn rw prisma migrate dev
@@ -75,7 +79,7 @@ We have some other [generators](cli-commands.md#generate-alias-g) that are just 
 
 ## Next Steps
 
-Need more? The best way to get to know Redwood is by going through the extensive [Redwood Tutorial](tutorial/foreword.md).
+The best way to get to know Redwood is by going through the [tutorial](tutorial/foreword.md).
 
 - Join our [Discord Server](https://discord.gg/redwoodjs)
 - Join our [Discourse Community](https://community.redwoodjs.com)
