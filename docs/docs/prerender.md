@@ -1,8 +1,10 @@
 # Prerender
 
-Some of your pages don't have dynamic content; it'd be great if you could render them ahead of time, making for a faster experience for your end users.
+Some of your pages don't have dynamic content.
+It'd be great if you could render them ahead of time, making for a faster experience for your end users.
 
-We thought a lot about what the developer experience should be for route-based prerendering. The result is one of the smallest APIs imaginable!
+We thought a lot about what the developer experience should be for route-based prerendering.
+The result is one of the smallest APIs imaginable!
 
 > **How's Prerendering different from SSR/SSG/SWR/ISSG/...?**
 >
@@ -14,7 +16,7 @@ We thought a lot about what the developer experience should be for route-based p
 
 Prerendering a page is as easy as it gets. Just add the `prerender` prop to the Route that you want to prerender:
 
-```jsx {3} title="Routes.js"
+```jsx title="web/src/Routes.js"
 <Route path="/" page={HomePage} name="home" prerender/>
 ```
 
@@ -27,7 +29,8 @@ Then run `yarn rw build` and enjoy the performance boost!
 
 Just add the `prerender` prop to the Set that wraps all Pages you want to prerender:
 
-```jsx {3} title="Routes.js"
+```jsx title="web/src/Routes.js"
+// highlight-next-line
 <Set prerender>
   <Route path="/" page={HomePage} name="home" />
   <Route path="/about" page={AboutPage} name="hello" />
@@ -36,14 +39,16 @@ Just add the `prerender` prop to the Set that wraps all Pages you want to preren
 
 ### Not found page
 
-You can also prerender your not found page (a.k.a your 404 page). Just add—you guessed it—the `prerender` prop:
+You can also prerender your `NotFoundPage`, (a.k.a 404) page.
+Just add the `prerender` prop:
 
-```diff
+```diff title="web/src/Routes.js"
 -      <Route notfound page={NotFoundPage} />
 +      <Route notfound page={NotFoundPage} prerender/>
 ```
 
-This will prerender your NotFoundPage to `404.html` in your dist folder. Note that there's no need to specify a path.
+This prerenders `NotFoundPage` to `404.html` in your dist folder.
+Note that there's no need to specify a path.
 
 ## Cells, Private Routes, and Dynamic URLs
 
@@ -64,7 +69,9 @@ Right now prerendering won't work for dynamic URLs. We're working on this. If yo
 
 ## Prerender Utils
 
-Sometimes you need more fine-grained control over whether something gets prerendered. This may be because the component or library you're using needs access to browser APIs like `window` or `localStorage`. Redwood has three utils to help you handle these situations:
+Sometimes you need more fine-grained control over whether something gets prerendered.
+For example, may be the component or library you're using needs access to browser APIs like `window` or `localStorage`.
+Redwood has three utilities to help you handle these situations:
 
 - `<BrowserOnly>`
 - `useIsBrowser`
