@@ -1,85 +1,43 @@
 # Serverless Functions
 
-<!-- `redwood.toml`&mdash;`api/src/functions` by default.  -->
-
-Redwood looks for serverless functions in `api/src/functions`. Each function is mapped to a URI based on its filename. For example, you can find `api/src/functions/graphql.js` at `http://localhost:8911/graphql`.
+Redwood looks for serverless functions in `api/src/functions`. Each function is mapped to a URL based on its filename.
+For example, when you run the dev server, `api/src/functions/graphql.js` gets mapped to `http://localhost:8911/graphql`.
 
 ## Creating Serverless Functions
 
-Creating serverless functions is easy with Redwood's function generator:
+You can create a serverless function with the function generator:
 
-```bash
+```
 yarn rw g function <name>
 ```
 
-This will generate a stub serverless function in the folder `api/src/functions/<name>`, along with a test and an empty scenarios file.
+This generates a stub serverless function in the `api/src/functions/<name>` directory, along with a test and an empty scenarios file.
 
-_Example of a bare minimum handler you need to get going:_
-
-```jsx
-export const handler = async (event, context) => {
-  return {
-    statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      data: '${name} function',
-    }),
-  }
-}
-```
-
-> Just a note here, we call them 'serverless' but they can also be used on 'serverful' hosted environments too, such as Render or Heroku.
+> They're called "serverless", but they can be used in "serverful" environments too, like Render or Heroku.
 
 ## The handler
 
-For a lambda function to be a lambda function, it must export a handler that returns a status code. The handler receives two arguments: `event` and `context`. Whatever it returns is the `response`, which should include a `statusCode` at the very least.
+For a lambda function to be a lambda function, it must export a handler that returns a status code.
+The handler receives two arguments: `event` and `context`.
+Whatever it returns is the `response`, which should include a `statusCode` at the very least.
 
-> **File/Folder Structure**
+> **Directory and File Structure**
 >
-> For example, with a target function endpoint name of /hello, you could save the function file in one of the following ways:
+> Say you have an endpoint at `/hello`.
+> You could structure things in any of the following ways:
 >
-> - `./api/src/functions/hello.{js,ts}`
-> - `./api/src/functions/hello/hello.{js,ts}`
-> - `./api/src/functions/hello/index.{js,ts}`
+> - `./api/src/functions/hello.js`
+> - `./api/src/functions/hello/hello.js`
+> - `./api/src/functions/hello/index.js`
 >
-> Other files in the folder will _not_ be exposed as an endpoint
-
-### Re-using/Sharing code
-
-You can use code in `api/src` in your serverless function, some examples:
-
-```jsx
-// importing `db` directly
-import { db } from 'src/lib/db'
-
-// importing services
-import { update } from 'src/services/subscriptions'
-
-// importing a custom shared library
-import { reportError } from 'src/lib/errorHandling'
-```
-
-If you just want to move some logic into another file, that's totally fine too!
-
-```bash
-api/src
-├── functions
-│   ├── graphql.ts
-│   └── helloWorld
-│       ├── helloWorld.scenarios.ts
-│       ├── helloWorld.test.ts
-│       └── helloWorld.ts     # <-- imports hellWorldLib
-│       └── helloWorldLib.ts  # <-- exports can be used in the helloWorld
-```
+> Other files in the folder won't be exposed as an endpoint.
 
 ## Developing locally
 
-When you run `yarn rw dev` - it'll watch for changes and make your functions available at:
+When you run `yarn rw dev`, it'll watch for changes and make your functions available at:
 
 - `localhost:8911/{functionName}` and
-- `localhost:8910/.redwood/functions/{functionName}` (used by the web side).
+- `localhost:8910/.redwood/functions/{functionName}` (used by the web side)
 
 Note that the `.redwood/functions` path is determined by your setting in your [redwood.toml](app-configuration-redwood-toml.md#web) - and is used both in development and in the deployed Redwood app
 
